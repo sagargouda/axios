@@ -14,7 +14,7 @@ async function getTodos() {
   //   console.log(error);
   // }
 
-  //!! there is a shgotcut to
+  //!! there is a shortcut to
   try {
     const response = await axios.get(
       "https://jsonplaceholder.typicode.com/todos?_limit=5"
@@ -27,28 +27,99 @@ async function getTodos() {
 }
 
 // POST REQUEST
-function addTodo() {
-  console.log("POST Request");
+async function addTodo() {
+  try {
+    const response = await axios.post(
+      "https://jsonplaceholder.typicode.com/todos",
+      {
+        title: "new sagar",
+        done: "work",
+      }
+    );
+    // const responseData = response.data;
+    // console.log(responseData.title);
+  } catch (err) {
+    console.log(err);
+  }
 }
 
 // PUT/PATCH REQUEST
-function updateTodo() {
-  console.log("PUT/PATCH Request");
+async function updateTodo() {
+  //?? for updating
+  try {
+    const response = await axios.put(
+      "https://jsonplaceholder.typicode.com/todos/1",
+      {
+        title: "old sagar",
+        done: "no work",
+      }
+    );
+    console.log(response);
+  } catch (err) {
+    console.log(err);
+  }
 }
 
 // DELETE REQUEST
-function removeTodo() {
-  console.log("DELETE Request");
+async function removeTodo() {
+  try {
+    const response = await axios.delete(
+      "https://jsonplaceholder.typicode.com/todos/1"
+    );
+  } catch (err) {
+    console.log(err);
+  }
 }
 
 // SIMULTANEOUS DATA
-function getData() {
-  console.log("Simultaneous Request");
+// async function getData() {
+//   try {
+//     const [todos, posts] = await axios.all([
+//       axios.get("https://jsonplaceholder.typicode.com/todos"),
+//       axios.get("https://jsonplaceholder.typicode.com/posts"),
+//     ]);
+//     console.log(todos, posts);
+//   } catch (err) {
+//     console.log(err);
+//   }
+// }
+async function getData() {
+  try {
+    const response = await axios.all([
+      axios.get("https://jsonplaceholder.typicode.com/todos?_limit=5"),
+      axios.get("https://jsonplaceholder.typicode.com/posts?_limit=5"),
+    ]);
+
+    axios.spread((todos, posts) => {
+      console.log(todos, posts);
+      // Perform any actions with todos and posts here
+    })(response);
+  } catch (err) {
+    console.log(err);
+  }
 }
 
 // CUSTOM HEADERS
-function customHeaders() {
-  console.log("Custom Headers");
+async function customHeaders() {
+  const config = {
+    headers: {
+      "Content-type": "sagar/json",
+      Authorization: "sometoken",
+    },
+  };
+  try {
+    const response = await axios.post(
+      "https://jsonplaceholder.typicode.com/todos",
+      {
+        title: "New todo",
+        completed: false,
+      },
+      config
+    );
+    console.log(response);
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 // TRANSFORMING REQUESTS & RESPONSES
@@ -67,7 +138,19 @@ function cancelToken() {
 }
 
 // INTERCEPTING REQUESTS & RESPONSES
-
+axios.interceptors.request.use(
+  (config) => {
+    console.log(
+      `${config.method.toUpperCase()} request send to ${
+        config.url
+      } at ${new Date().getTime()}`
+    );
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 // AXIOS INSTANCES
 
 // Show output in browser
